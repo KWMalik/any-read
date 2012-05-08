@@ -14,7 +14,10 @@ class Prettify(nodes: Nodes) extends Logging {
   private val scores = scala.collection.mutable.Map[NodeWrapper, Float]()
 
   def getContent(document: NodeWrapper): NodeWrapper = {
+    debugPretty(2, "initial processing ...")
     val paragraphs: List[NodeWrapper] = document.allChildren().filter(processParagraphs _)
+
+    debugPretty(2, "selecting top candidates ...")
 
     val topCandidates = selectTopCandidates(paragraphs)
 
@@ -29,8 +32,15 @@ class Prettify(nodes: Nodes) extends Logging {
 
     val article = nodes.create("div")
 
+    processSiblings(topCandidate, article)
+
+    article
+  }
+
+
+  def processSiblings(topCandidate: NodeWrapper, article: NodeWrapper) {
     val siblingScoreThreshold = max(10, score(topCandidate) * 0.2)
-    var siblings = topCandidate.parent.toList.flatMap(_.children())
+    val siblings = topCandidate.parent.toList.flatMap(_.children())
 
     for {
       sibling <- siblings
@@ -39,30 +49,30 @@ class Prettify(nodes: Nodes) extends Logging {
       var contentBonus: Float = 0
 
       /* Give a bonus if sibling nodes and top candidates have the example same classname */
-      if(topCandidate.classes.isDefined && sibling.classes == topCandidate.classes) {
+      if (topCandidate.classes.isDefined && sibling.classes == topCandidate.classes) {
         contentBonus = contentBonus + (score(topCandidate) * 0.2).toFloat;
       }
 
-      if(!append && score(sibling) + contentBonus >= siblingScoreThreshold) {
+      if (!append && score(sibling) + contentBonus >= siblingScoreThreshold) {
         append = true;
       }
 
-      if(sibling.tagName.equalsIgnoreCase("p")) {
+      if (sibling.tagName.equalsIgnoreCase("p")) {
         val linkDensity = getLinksDensity(sibling);
         val nodeContent = getInnerText(sibling);
-        val nodeLength  = nodeContent.length;
+        val nodeLength = nodeContent.length;
 
-        if(nodeLength > 80 && linkDensity < 0.25){
+        if (nodeLength > 80 && linkDensity < 0.25) {
           append = true;
-        } else if(nodeLength < 80 && linkDensity == 0 && new Regex("""\.( |$)""").findFirstIn(nodeContent).isDefined) {
+        } else if (nodeLength < 80 && linkDensity == 0 && new Regex("""\.( |$)""").findFirstIn(nodeContent).isDefined) {
           append = true;
         }
       }
 
-      if(append) {
+      if (append) {
         debugPretty(4, "Appending node: " + sibling);
 
-        if(!Set("div", "p").contains(sibling.tagName.toLowerCase)) {
+        if (!Set("div", "p").contains(sibling.tagName.toLowerCase)) {
           /* We have a node that isn't a common block level element, like a form or td tag. Turn it into a div so it doesn't get filtered out later by accident. */
 
           debugPretty(4, "Altering siblingNode of " + sibling.tagName + " to div.")
@@ -76,10 +86,7 @@ class Prettify(nodes: Nodes) extends Logging {
         article.appendChild(sibling);
       }
     }
-
-    article
   }
-
 
   def selectTopCandidate(topCandidates: scala.List[NodeWrapper]): Option[NodeWrapper] = {
     topCandidates.foldLeft(Option[NodeWrapper](null))(

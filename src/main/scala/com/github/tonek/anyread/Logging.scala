@@ -2,13 +2,20 @@ package com.github.tonek.anyread
 
 import org.slf4j.LoggerFactory
 import scala._
+import scala.math._
 
 /**
  * @author anton.safonov
  */
 
 trait Logging {
-  val statsWidth: Int = 120
+  val statsWidth: Int = 80
+
+  val defaultIndent = 4
+  val headerIndent = 10
+
+  val indentation = "="
+  val headerIndentation = "*"
 
   private[this] val logger = LoggerFactory.getLogger(getClass)
 
@@ -34,10 +41,28 @@ trait Logging {
 
   def error(message: => String, ex: Throwable) = if (logger.isErrorEnabled) logger.error(message, ex)
 
-  def debugPretty(indent: Int, message: => String) = if (logger.isDebugEnabled) {
+  def debugPrettyHeader(message: => String) = if (logger.isDebugEnabled) {
+    val msg = new StringBuilder()
+    for (i <- 0 until min(statsWidth - message.length, headerIndent - 1)) {
+      msg.append(headerIndentation)
+    }
+
+    msg.append(" ").append(message)
+    if (msg.length < statsWidth - 1) {
+      msg.append(" ");
+    }
+
+    for (i <- 0 until statsWidth - msg.length) {
+      msg.append(headerIndentation)
+    }
+
+    logger.debug(msg.toString())
+  }
+
+  def debugPretty(indent: Int = defaultIndent, message: => String) = if (logger.isDebugEnabled) {
     val msg = new StringBuilder()
     for (i <- 0 until indent) {
-      msg.append("=")
+      msg.append(indentation)
     }
     if (indent > 0) {
       msg.append(" ")

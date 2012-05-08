@@ -13,24 +13,16 @@ class PrettifySpec extends FunSuite with Logging with NodesUtil{
 
   val likelyCandidate = nodeWrapper("qwe", "article")
 
-//  test("unlikely candidates are filtered out") {
-//    assert(UnlikelyCandidates.isCandidate(unlikelyCandidate))
-//    assert(!UnlikelyCandidates.isCandidate(likelyCandidate))
-//  }
-//
-//  test("possible candidates should stay") {
-//    assert(!PossibleCandidates.isCandidate(unlikelyCandidate))
-//    assert(PossibleCandidates.isCandidate(likelyCandidate))
-//
-//    val p = new Prettify(JsoupNodes)
-//    p.getContent(unlikelyCandidate)
-//  }
+  test("unlikely candidates are filtered out") {
+    assert(UnlikelyCandidates.isCandidate(unlikelyCandidate))
+    assert(!UnlikelyCandidates.isCandidate(likelyCandidate))
+  }
 
-  test("habr") {
-    val document = Jsoup.connect("http://habrahabr.ru/post/143459/").get()
+  test("possible candidates should stay") {
+    assert(!PossibleCandidates.isCandidate(unlikelyCandidate))
+    assert(PossibleCandidates.isCandidate(likelyCandidate))
+
     val p = new Prettify(JsoupNodes)
-    val content = p.getContent(new JsoupElementWrapper(document))
-
-    print(content.toPrintableString())
+    p.getContent(unlikelyCandidate)
   }
 }
