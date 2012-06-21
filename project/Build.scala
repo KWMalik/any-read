@@ -57,8 +57,10 @@ object Dependencies {
   val liftsquerrec = "net.liftweb" % l("lift-squeryl-record") % liftVer
   val liftwidgets = "net.liftweb" % l("lift-widgets") % liftVer
   val textile = "net.liftweb" % l("lift-textile") % liftVer
+
   val lesscss = "com.asual.lesscss" % "lesscss-engine" % lessVer
   val lesscssservlet = "com.asual.lesscss" % "lesscss-servlet" % lessVer
+
   val servlet = "javax.servlet" % "servlet-api" % "2.5" % "provided->default"
 
   val jettyServer = "org.eclipse.jetty" % "jetty-server" % jettyVer % "container"
@@ -66,6 +68,7 @@ object Dependencies {
 
   val jsp = "javax.servlet.jsp" % "jsp-api" % "2.1"
   val jspCompiler = "tomcat" % "jasper-compiler" % "5.5.9"
+  val scalap = "org.scala-lang" % "scalap" % "2.9.2"
 
   val junit = "junit" % "junit" % "4.8.2" % "test->default"
   val testng = "org.testng" % "testng" % "6.0.1" % "test->default"
@@ -73,7 +76,7 @@ object Dependencies {
   val log4jTest = "log4j" % "log4j" % "[1.2.16,)" % "test"
 
   val liftDeps = Seq(
-    liftweb, liftrecord, liftutil, liftactor, liftcommon, liftjson, liftjsonext, liftsquerrec, liftwidgets
+    liftweb, liftrecord, liftutil, liftactor, liftcommon, liftjson, liftjsonext, liftsquerrec, liftwidgets, scalap
   )
 
   val lessDeps = Seq(lesscss, lesscssservlet)
