@@ -42,7 +42,6 @@ object Dependencies {
   val jsoup = "org.jsoup" % "jsoup" % "1.6.2"
 
   val slf = "org.slf4j" % "slf4j-log4j12" % "[1.6.4,)"
-  val log4j = "log4j" % "log4j" % "[1.2.16,)"
 
   val jodaTime = "joda-time" % "joda-time" % "2.0"
   val jodaConvert = "org.joda" % "joda-convert" % "1.2"
@@ -64,7 +63,7 @@ object Dependencies {
   val servlet = "javax.servlet" % "servlet-api" % "2.5" % "provided->default"
 
   val jettyServer = "org.eclipse.jetty" % "jetty-server" % jettyVer % "container"
-  val jettyWebApp = "org.eclipse.jetty" % "jetty-webapp" % jettyVer % "container"
+  val jettyWebApp = "org.eclipse.jetty" % "jetty-webapp" % jettyVer % "test->default"
 
   val jsp = "javax.servlet.jsp" % "jsp-api" % "2.1"
   val jspCompiler = "tomcat" % "jasper-compiler" % "5.5.9"
@@ -79,11 +78,13 @@ object Dependencies {
     liftweb, liftrecord, liftutil, liftactor, liftcommon, liftjson, liftjsonext, liftsquerrec, liftwidgets, scalap
   )
 
+  val commonDeps = Seq(slf)
+
   val lessDeps = Seq(lesscss, lesscssservlet)
 
   val jettyDeps = Seq(jettyServer, jettyWebApp)
 
-  val webDeps = liftDeps ++ lessDeps ++ jettyDeps
+  val webDeps = liftDeps ++ lessDeps ++ jettyDeps ++ commonDeps
 }
 
 object AnyReadBuild extends Build {

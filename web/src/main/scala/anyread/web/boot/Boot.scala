@@ -1,12 +1,10 @@
-package anyread.boot
+package anyread.web.boot
 
-import net.liftweb.common.Logger
 import net.liftweb._
 import common._
 import http._
 import js.JsCmds.Run
 import java.util.Locale
-import javax.mail.{PasswordAuthentication, Authenticator}
 import util._
 import Helpers._
 import java.lang.reflect.InvocationTargetException
@@ -16,13 +14,9 @@ class Boot {
   def boot() {
     LiftRules.ajaxDefaultFailure = Empty
     LiftRules.ajaxRetryCount = Full(0)
-    Mailer.authenticator = Full(SimpleAuthenticator)
     val russianLocale = new Locale("ru", "RU")
     Locale.setDefault(russianLocale)
     LiftRules.localeCalculator = _ => russianLocale
-    LiftRules.resourceNames = "i18n/sidebar" :: LiftRules.resourceNames
-    LiftRules.resourceNames = "i18n/topics" :: LiftRules.resourceNames
-    LiftRules.resourceNames = "i18n/diff" :: LiftRules.resourceNames
 
     Logger.setup = Full(Log4j.withFile(getClass.getResource("/log4j.properties")))
 
@@ -71,10 +65,3 @@ class Boot {
 
   }
 }
-
-object SimpleAuthenticator extends Authenticator {
-  override def getPasswordAuthentication = new PasswordAuthentication(
-    Props.get("mail.smtp.user").get, Props.get("mail.smtp.password").get
-  )
-}
-
