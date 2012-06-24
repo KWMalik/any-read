@@ -14,11 +14,6 @@ trait BasePanel {
   val uniqueId: String = "PanelId_" + self.getClass.getCanonicalName
     .substring(0, self.getClass.getCanonicalName.size-1).replaceAll("\\.", "_")
 
-//  def redraw(): JsCmd = {
-//      SetHtml(uniqueId, panelWidget.draw())
-//        Run("rewriteUrl('%s', '/'+'%s')".format(state, state.buildUrl()))
-//  }
-
   def draw(): NodeSeq = panelWidget.draw()
 
   protected def panelWidget: Widget
