@@ -8,7 +8,7 @@ import java.util.Locale
 import util._
 import Helpers._
 import java.lang.reflect.InvocationTargetException
-import anyread.web.states.{RedNameStateHandler, GreenNameStateHandler}
+import anyread.web.states.{StateHandlersRegistry, RedNameStateHandler, GreenNameStateHandler}
 
 class Boot {
 
@@ -68,12 +68,10 @@ class Boot {
   }
 
   def rewriteRequests() {
-    val rewrites = List(
-      GreenNameStateHandler.rewrite, RedNameStateHandler.rewrite
-    )
+    val rewrites = StateHandlersRegistry.allHandlers.filter(_.rewrite.isDefined).map(_.rewrite)
     LiftRules.statefulRewrite.append(
       NamedPF("AnyReadRequestRewriter") {
-        rewrites.filter(_.isDefined).map(_.get).reduceLeft(_ orElse _)
+        rewrites.map(_.get).reduceLeft(_ orElse _)
       }
     )
   }

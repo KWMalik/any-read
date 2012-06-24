@@ -15,42 +15,63 @@ trait PageState {
 
 object StateHandlersRegistry {
   private var handlers: Set[PageStateHandler] = Set()
+  register(PreviewPageStateHandler)
+  register(RssListState)
 
   def allHandlers = handlers
 
-  def register(handler : PageStateHandler) {
+  def register(handler: PageStateHandler) {
     handlers += handler
   }
 }
 
 trait PageStateHandler {
-  self =>
-  StateHandlersRegistry.register(self)
+
   def path: List[String]
 
   def rewrite: Option[PartialFunction[RewriteRequest, RewriteResponse]] = None
 
-  def deserialize : PartialFunction[(String, String), PageState]
+  def deserialize: PartialFunction[(String, String), PageState]
 }
 
-case class GreenNameState(name: String) extends PageState {
+case object RssListState extends PageState with PageStateHandler {
+  val path = "rss" :: "list" :: Nil
 
-  def buildUrl() = (GreenNameStateHandler.path ::: name :: Nil).mkString("/")
+  def buildUrl() = path.mkString("/")
 
-  val handler = GreenNameStateHandler
+  val handler = this
 
-  val typeName = "GreenNameState"
-}
+  val typeName = "RssList"
 
-case object GreenNameStateHandler extends PageStateHandler {
-  val name = "GreenNameState"
-  val path = "names" :: "green" :: Nil
+  def deserialize = {
+    case ("RssList", state) => this
+  }
 
   override def rewrite: Option[PartialFunction[RewriteRequest, RewriteResponse]] = {
     Some(
-      NamedPF("greenName") {
-        case RewriteRequest(ParsePath("names" :: "green" :: name :: Nil, _, _, _), _, _) => {
-          SinglePageState(new GreenNameState(name))
+      NamedPF("preview") {
+        case RewriteRequest(ParsePath("rss" :: "list" :: Nil, _, _, _), _, _) => {
+          SinglePageState(this)
+          RewriteResponse(ParsePath("index" :: Nil, "", true, false), Map(), true)
+        }
+      }
+    )
+  }
+}
+
+case class PreviewPageState(id: Long) extends PageState {
+  def buildUrl() = (PreviewPageStateHandler.path ::: id.toString :: Nil).mkString("/")
+  val handler = PreviewPageStateHandler
+  val typeName = "PreviewPage"
+}
+object PreviewPageStateHandler extends PageStateHandler {
+  def path = "preview" :: Nil
+
+  override def rewrite: Option[PartialFunction[RewriteRequest, RewriteResponse]] = {
+    Some(
+      NamedPF("preview") {
+        case RewriteRequest(ParsePath("preview" ::  id :: Nil, _, _, _), _, _) => {
+          SinglePageState(new PreviewPageState(id.toLong))
           RewriteResponse(ParsePath("index" :: Nil, "", true, false), Map(), true)
         }
       }
@@ -58,37 +79,10 @@ case object GreenNameStateHandler extends PageStateHandler {
   }
 
   def deserialize = {
-    case ("GreenNameState", state) => {
+    case ("PreviewPage", state) => {
       implicit val formats = DefaultFormats
       val json = JsonParser.parse(state)
-      json.extract[GreenNameState]
+      json.extract[PreviewPageState]
     }
   }
-}
-
-case object RedNameStateHandler extends PageStateHandler {
-  val path = "names" :: "red" :: Nil
-
-  override def rewrite: Option[PartialFunction[RewriteRequest, RewriteResponse]] = {
-    Some(
-      NamedPF("redName") {
-        case RewriteRequest(ParsePath("names" :: "red" :: Nil, _, _, _), _, _) => {
-          SinglePageState(RedNameState)
-          RewriteResponse(ParsePath("index" :: Nil, "", true, false), Map(), true)
-        }
-      }
-    )
-  }
-
-  def deserialize = {
-    case ("RedNameState", state) => RedNameState
-  }
-}
-
-case object RedNameState extends PageState {
-  def buildUrl() = RedNameStateHandler.path.mkString("/")
-
-  val handler = RedNameStateHandler
-
-  val typeName = "RedNameState"
 }

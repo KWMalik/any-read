@@ -19,7 +19,7 @@ object RssFeedLoader {
     val entries: List[SyndEntry] = syndFeed.getEntries.toList.asInstanceOf[List[SyndEntry]]
     entries.map(entry => {
       val description = if(entry.getDescription == null) "" else entry.getDescription.getValue
-      RssFeed(1, entry.getLink, entry.getTitle, description, new DateTime(entry.getUpdatedDate))
+      FeedDao.create(entry.getLink, entry.getTitle, description)
     })
   }
 }

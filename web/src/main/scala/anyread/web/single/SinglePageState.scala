@@ -1,10 +1,10 @@
 package anyread.web.single
 
 import net.liftweb.http.RequestVar
-import anyread.web.states.{RedNameState, PageState}
+import anyread.web.states.{RssListState, RedNameState, PageState}
 
 /**
  * @author anton.safonov
  */
 
-object SinglePageState extends RequestVar[PageState](RedNameState)
+object SinglePageState extends RequestVar[PageState](RssListState)

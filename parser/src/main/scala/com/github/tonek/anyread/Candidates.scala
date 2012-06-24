@@ -51,7 +51,7 @@ object UnlikelyCandidates extends IdClassRegexCandidates (
 object PossibleCandidates extends IdClassRegexCandidates("and|article|body|column|main|shadow")
 
 object PositiveClassCandidates extends ClassRegexCandidates(
-  "article|body|content|entry|hentry|main|page|pagination|post|text|blog|story"
+  "article|body|content|entry|hentry|main|page|pagination|post|text|blog|story|article-content"
 )
 object PositiveIdCandidates extends IdRegexCandidates(
   "article|body|content|entry|hentry|main|page|pagination|post|text|blog|story"

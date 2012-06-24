@@ -13,7 +13,6 @@ import net.liftweb.http.js.JsCmds.SetHtml
 import net.liftweb.util.Helpers._
 import net.liftweb.http.S.SFuncHolder
 import scala.Some
-import anyread.web.states.GreenNameState
 
 /**
  * @author anton.safonov
@@ -24,10 +23,9 @@ object MainPage extends DispatchSnippet{
   private val panels: mutable.MultiMap[PageStateHandler, BasePanel]
   = new mutable.HashMap[PageStateHandler, mutable.Set[BasePanel]] with mutable.MultiMap[PageStateHandler, BasePanel]
 
-  panels.addBinding(GreenNameStateHandler, LeftPanel)
-  panels.addBinding(GreenNameStateHandler, RightPanel)
-  panels.addBinding(RedNameStateHandler, LeftPanel)
-  panels.addBinding(RedNameStateHandler, RightPanel)
+  panels.addBinding(RssListState, MainContent)
+  panels.addBinding(PreviewPageStateHandler, MainContent)
+  panels.addBinding(PreviewPageStateHandler, DetailsPanel)
 
 
   def dispatch = {
@@ -35,10 +33,7 @@ object MainPage extends DispatchSnippet{
   }
 
   def render: CssSel = {
-    ".to-green [onclick]" #> SHtml.ajaxInvoke(() => redrawAndRewrite(new GreenNameState("bla-bla"))) &
-      ".to-red [onclick]" #> SHtml.ajaxInvoke(() => redrawAndRewrite(RedNameState)) &
       "#initScript" #> Script(initBackForward)
-
   }
 
   def redrawAndRewrite(state: PageState): JsCmd = redraw(state) & rewriteUrl()
@@ -52,14 +47,13 @@ object MainPage extends DispatchSnippet{
     cmds.reduceLeft(_ & _)
   }
 
-  private def rewriteUrl(): JsCmd = {
+  private def rewriteUrl(): JsCmd = Run("rewriteUrl(%s)".format(buildRewriteParams()))
+
+  private def buildRewriteParams(): String = {
     val state = SinglePageState.get
     implicit val formats = DefaultFormats
     val serializedState = Serialization.write(state)
-    Run(
-      "rewriteUrl('%s', '%s', '%s', '/'+'%s')"
-        .format(state.typeName, serializedState, state.typeName, state.buildUrl())
-    )
+    "'%s', '%s', '%s', '/'+'%s'".format(state.typeName, serializedState, state.typeName, state.buildUrl())
   }
 
   private def drawHistory(ignored: String): LiftResponse = {
@@ -82,7 +76,7 @@ object MainPage extends DispatchSnippet{
     S.fmapFunc(SFuncHolder(drawHistory))(
       func => {
         val url = S.encodeURL(S.contextPath + "/" + LiftRules.ajaxPath) + "?" + func + "=_"
-        Run("initBackForward('%s')".format(url))
+        Run("initBackForward('%s', %s)".format(url, buildRewriteParams()))
       }
     )
   }

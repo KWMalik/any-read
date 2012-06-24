@@ -3,6 +3,15 @@
 @import "mixins.less";
 
 //RSS
+.main, .details {
+    width: 45%;
+    display: inline-block;
+    vertical-align: top;
+}
+.details {
+    position: fixed;
+    top: 0;
+}
 .rss-list {
     background-color: @feedListBack;
     padding: @paddingMedium;
@@ -14,5 +23,12 @@
     border-top-color: @feedBorderTopColor;
     background-color: @feedBackColor;
     .box-shadow();
+    .border-radius();
+}
+.rss-item-info {
+    background-color: white;
+    border: 1px solid #B9B9B9;
+    border-bottom-color: #939393;
+    padding: @paddingSmall;
     .border-radius();
 }

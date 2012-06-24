@@ -116,17 +116,19 @@ function rewriteUrl(stateType, state, title, urlPath){
     document.title = title;
     window.history.pushState({"pageTitle":title, "state":state, "stateType":stateType}, title, urlPath);
 }
-function initBackForward(urlPath) {
+function initBackForward(requestUrl, stateType, state, title, urlPath) {
     window.onpopstate = function (e) {
         if (e.state) {
             document.title = e.state.pageTitle;
             $.ajax({
                 type:"GET",
-                url:urlPath,
+                url:requestUrl,
                 data:{ newStateType:e.state.stateType, newState:e.state.state }
             }).done(function (msg) {
                     //alert("Data Saved: " + msg);
                 });
+        } else {
+            //rewriteUrl(stateType, state, title, urlPath);
         }
     };
 }
