@@ -79,9 +79,7 @@ object Dependencies {
     liftweb, liftrecord, liftutil, liftactor, liftcommon, liftjson, liftjsonext, liftsquerrec, liftwidgets, scalap
   )
 
-  val libDeps = Seq(slf, scalatest, log4jTest)
-
-  val commonDeps = Seq(slf)
+  val commonDeps = Seq(slf, scalatest, log4jTest, jodaTime, jodaConvert)
 
   val lessDeps = Seq(lesscss, lesscssservlet)
 
@@ -95,11 +93,11 @@ object AnyReadBuild extends Build {
   import BuildSettings._
   import Dependencies._
 
-  lazy val parser = createProject("parser", defaultSettings, (libDeps ++ Seq(jsoup)):_*)
+  lazy val parser = createProject("parser", defaultSettings, (commonDeps ++ Seq(jsoup)):_*)
 
-  lazy val feed = createProject("feed", defaultSettings, (libDeps ++ Seq(rome)):_*)
+  lazy val feed = createProject("feed", defaultSettings, (commonDeps ++ Seq(rome)):_*)
 
-  lazy val web = createProject("web", webSettings, webDeps:_*)
+  lazy val web = createProject("web", webSettings, webDeps:_*) dependsOn(feed, parser)
 
   def createProject(name: String, settings: Seq[Setting[_]], deps: ModuleID*) =
     Project(name, file(name), settings = settings ++ Seq(libraryDependencies ++= deps))

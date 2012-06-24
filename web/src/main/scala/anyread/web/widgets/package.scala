@@ -5,6 +5,7 @@ import org.joda.time.format.DateTimeFormatterBuilder
 import xml.NodeSeq
 import java.util.{Calendar, Date}
 import net.liftweb.http.Templates
+import org.joda.time.DateTime
 
 package object widgets extends WidgetsTrait
 
@@ -17,11 +18,13 @@ with ClassHelpers with ControlHelpers {
     .appendHourOfDay(2).appendLiteral(':').appendMinuteOfHour(2).toFormatter
 
   def hiddenT(path: List[String]): NodeSeq = Templates("templates-hidden" :: path).get
-  def hiddenT(path: String): NodeSeq = hiddenT(path :: Nil)
+  def hiddenT(path: String*): NodeSeq = hiddenT(path.toList)
 
   def format(date: Date): String = {
     dateTimeFormatter.print(date.getTime)
   }
 
   def format(calendar: Calendar): String = format(calendar.getTime)
+
+  def format(dateTime: DateTime): String = format(dateTime.toDate)
 }
