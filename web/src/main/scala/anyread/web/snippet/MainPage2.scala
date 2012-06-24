@@ -1,25 +1,23 @@
 package anyread.web.snippet
 
+import net.liftweb.util.Helpers._
 import net.liftweb.http._
-import collection.mutable
+import net.liftweb.http.js.JsCmd
 import anyread.web.states._
 import net.liftweb.util.CssSel
-import net.liftweb.http.js.JsCmds.Script
-import net.liftweb.http.js.JsCmd
 import anyread.web.single.SinglePageState
-import net.liftweb.json.{Serialization, DefaultFormats}
-import net.liftweb.http.js.JsCmds.Run
-import net.liftweb.http.js.JsCmds.SetHtml
-import net.liftweb.util.Helpers._
+import collection.mutable
+import js.JsCmds.{Script, SetHtml, Run}
 import net.liftweb.http.S.SFuncHolder
 import scala.Some
 import anyread.web.states.GreenNameState
+import net.liftweb.json.{DefaultFormats, Serialization}
 
 /**
  * @author anton.safonov
  */
 
-object MainPage extends DispatchSnippet{
+object MainPage2 extends DispatchSnippet{
 
   private val panels: mutable.MultiMap[PageStateHandler, BasePanel]
   = new mutable.HashMap[PageStateHandler, mutable.Set[BasePanel]] with mutable.MultiMap[PageStateHandler, BasePanel]

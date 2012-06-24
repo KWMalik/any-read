@@ -73,10 +73,13 @@ object Dependencies {
   val testng = "org.testng" % "testng" % "6.0.1" % "test->default"
   val scalatest = "org.scalatest" %% "scalatest" % "1.7.2" % "test"
   val log4jTest = "log4j" % "log4j" % "[1.2.16,)" % "test"
+  val rome = "rome" % "rome" % "1.0"
 
   val liftDeps = Seq(
     liftweb, liftrecord, liftutil, liftactor, liftcommon, liftjson, liftjsonext, liftsquerrec, liftwidgets, scalap
   )
+
+  val libDeps = Seq(slf, scalatest, log4jTest)
 
   val commonDeps = Seq(slf)
 
@@ -92,7 +95,9 @@ object AnyReadBuild extends Build {
   import BuildSettings._
   import Dependencies._
 
-  lazy val parser = createProject("parser", defaultSettings, slf, jsoup, scalatest, log4jTest)
+  lazy val parser = createProject("parser", defaultSettings, (libDeps ++ Seq(jsoup)):_*)
+
+  lazy val feed = createProject("feed", defaultSettings, (libDeps ++ Seq(rome)):_*)
 
   lazy val web = createProject("web", webSettings, webDeps:_*)
 
