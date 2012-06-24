@@ -1,0 +1,18 @@
+@import "skin.less";
+@import "variables.less";
+@import "mixins.less";
+
+//RSS
+.rss-list {
+    background-color: @feedListBack;
+    padding: @paddingMedium;
+}
+.rss-item {
+    padding: @paddingMedium;
+    margin-bottom: @paddingSmall;
+    border: 1px solid;
+    border-top-color: @feedBorderTopColor;
+    background-color: @feedBackColor;
+    .box-shadow();
+    .border-radius();
+}
