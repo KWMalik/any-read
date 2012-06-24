@@ -8,6 +8,7 @@ import java.util.Locale
 import util._
 import Helpers._
 import java.lang.reflect.InvocationTargetException
+import anyread.web.states.{RedNameStateHandler, GreenNameStateHandler}
 
 class Boot {
 
@@ -63,5 +64,17 @@ class Boot {
       }
     }
 
+    rewriteRequests()
+  }
+
+  def rewriteRequests() {
+    val rewrites = List(
+      GreenNameStateHandler.rewrite, RedNameStateHandler.rewrite
+    )
+    LiftRules.statefulRewrite.append(
+      NamedPF("AnyReadRequestRewriter") {
+        rewrites.filter(_.isDefined).map(_.get).reduceLeft(_ orElse _)
+      }
+    )
   }
 }
