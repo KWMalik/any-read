@@ -112,14 +112,21 @@ function checkNewCommentButtonsEnabled(input, id) {
     }
 }
 
-function rewriteUrl(title, urlPath){
+function rewriteUrl(stateType, state, title, urlPath){
     document.title = title;
-    window.history.pushState({"pageTitle":title}, title, urlPath);
+    window.history.pushState({"pageTitle":title, "state":state, "stateType":stateType}, title, urlPath);
 }
-function initRewrite() {
-    window.onpopstate = function(e){
-        if(e.state){
+function initBackForward(urlPath) {
+    window.onpopstate = function (e) {
+        if (e.state) {
             document.title = e.state.pageTitle;
+            $.ajax({
+                type:"GET",
+                url:urlPath,
+                data:{ newStateType:e.state.stateType, newState:e.state.state }
+            }).done(function (msg) {
+                    //alert("Data Saved: " + msg);
+                });
         }
     };
 }
