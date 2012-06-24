@@ -7,4 +7,4 @@ import anyread.web.states.{RedNameState, PageState}
  * @author anton.safonov
  */
 
-object SinglePageState extends RequestVar[Option[PageState]](Some(RedNameState))
+object SinglePageState extends RequestVar[PageState](RedNameState)

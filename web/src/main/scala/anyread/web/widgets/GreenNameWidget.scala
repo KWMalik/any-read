@@ -10,7 +10,7 @@ import anyread.web.states.GreenNameState
 
 object GreenNameWidget extends Widget {
   def draw(): NodeSeq = {
-    val state = SinglePageState.get.get.asInstanceOf[GreenNameState]
+    val state = SinglePageState.get.asInstanceOf[GreenNameState]
     val css = ".name *" #> state.name & ".name-wrapper [class+]" #> "green"
     css(hiddenT("name_widget"))
   }

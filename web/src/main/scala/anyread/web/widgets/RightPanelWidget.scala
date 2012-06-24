@@ -14,8 +14,8 @@ object RightPanelWidget extends Widget{
   }
 
   private def widget: Widget = SinglePageState.get match {
-    case Some(RedNameState) => RedNameWidget
-    case Some(GreenNameState(_)) => GreenNameWidget
+    case RedNameState => RedNameWidget
+    case GreenNameState(_) => GreenNameWidget
     case _ => throw new IllegalStateException("No state defined")
   }
 }

@@ -6,6 +6,8 @@ import anyread.web.single.SinglePageState
 
 trait PageState {
   def buildUrl(): String
+
+  def handler: PageStateHandler
 }
 
 trait PageStateHandler {
@@ -17,6 +19,8 @@ trait PageStateHandler {
 case class GreenNameState(name: String) extends PageState {
 
   def buildUrl() = (GreenNameStateHandler.path ::: name :: Nil).mkString("/")
+
+  val handler = GreenNameStateHandler
 }
 
 case object GreenNameStateHandler extends PageStateHandler {
@@ -26,7 +30,7 @@ case object GreenNameStateHandler extends PageStateHandler {
     Some(
       NamedPF("greenName") {
         case RewriteRequest(ParsePath("names" :: "green" :: name :: Nil, _, _, _), _, _) => {
-          SinglePageState(Some(new GreenNameState(name)))
+          SinglePageState(new GreenNameState(name))
           RewriteResponse(ParsePath("index" :: Nil, "", true, false), Map(), true)
         }
       }
@@ -41,7 +45,7 @@ case object RedNameStateHandler extends PageStateHandler {
     Some(
       NamedPF("redName") {
         case RewriteRequest(ParsePath("names" :: "red" :: Nil, _, _, _), _, _) => {
-          SinglePageState(Some(RedNameState))
+          SinglePageState(RedNameState)
           RewriteResponse(ParsePath("index" :: Nil, "", true, false), Map(), true)
         }
       }
@@ -51,4 +55,6 @@ case object RedNameStateHandler extends PageStateHandler {
 
 case object RedNameState extends PageState {
   def buildUrl() = RedNameStateHandler.path.mkString("/")
+
+  val handler = RedNameStateHandler
 }
