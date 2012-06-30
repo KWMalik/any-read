@@ -38,7 +38,7 @@ object MainPage extends DispatchSnippet{
 
   def redrawAndRewrite(state: PageState): JsCmd = redraw(state) & rewriteUrl()
   def redrawAndRewrite(state: PageState, prevState: PageState, toRedraw: BasePanel*): JsCmd = {
-    partialRedraw(state, prevState, toRedraw:_*) & addToNavHistory(prevState)
+    partialRedraw(state, prevState, toRedraw:_*) & addToNavHistory(state)
   }
 
   def partialRedraw(state: PageState, prevState: PageState, toRedraw: BasePanel*): JsCmd = {
@@ -87,8 +87,7 @@ object MainPage extends DispatchSnippet{
     S.fmapFunc(SFuncHolder(drawHistory))(
       func => {
         val url = S.encodeURL(S.contextPath + "/" + LiftRules.ajaxPath) + "?" + func + "=_"
-        Run("initBackForward('%s', %s)".format(url, buildRewriteParams())) &
-        rewriteUrl()
+        Run("initBackForward('%s', %s)".format(url, buildRewriteParams()))
       }
     )
   }

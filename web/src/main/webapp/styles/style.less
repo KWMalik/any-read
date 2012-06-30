@@ -13,7 +13,7 @@
     top: 0;
 }
 .details {
-    right:0;
+    right: @paddingLarge;
 }
 .rss-list {
     background-color: @feedListBack;
@@ -34,4 +34,14 @@
     border-bottom-color: #939393;
     padding: @paddingSmall;
     .border-radius();
+}
+.preview-wrapper {
+    .preview-item {
+        background-color: white;
+        padding: @paddingMedium;
+        .border-radius();
+        .box-shadow();
+    }
+    background-color: @feedBackColor;
+    padding: @paddingMedium;
 }

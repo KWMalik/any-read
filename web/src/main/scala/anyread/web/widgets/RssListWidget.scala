@@ -21,6 +21,9 @@ object RssListWidget extends Widget {
           ".rss-item-date *" #> format(feed.date) &
           ".rss-item-preview [onclick]" #> SHtml.ajaxInvoke(
             () => MainPage.redrawAndRewrite(new PreviewPageState(feed.id), state, DetailsPanel)
+          ) &
+          ".rss-item-preview-full [onclick]" #> SHtml.ajaxInvoke(
+            () => MainPage.redrawAndRewrite(new PreviewPageState(feed.id, true), state, DetailsPanel)
           )
       }
     )

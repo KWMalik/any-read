@@ -123,7 +123,8 @@ function addHistory(stateType, state, title, urlPath){
 function initBackForward(requestUrl, stateType, state, title, urlPath) {
     window.onpopstate = function (e) {
         if (e.state) {
-            alert(e.state.state);
+//            alert(e.state.state);
+//            alert(window.history.state.state);
             document.title = e.state.pageTitle;
             $.ajax({
                 type:"GET",
