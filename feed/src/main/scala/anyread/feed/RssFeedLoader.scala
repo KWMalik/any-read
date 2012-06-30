@@ -13,7 +13,7 @@ import org.joda.time.DateTime
 
 object RssFeedLoader {
   def load(): List[RssFeed] = {
-    val feedUrl = new URL("http://news.ycombinator.com/rss")
+    val feedUrl = new URL("http://habrahabr.ru/rss/hubs/")
     val input = new SyndFeedInput()
     val syndFeed = input.build(new InputStreamReader(feedUrl.openStream()))
     val entries: List[SyndEntry] = syndFeed.getEntries.toList.asInstanceOf[List[SyndEntry]]

@@ -37,6 +37,15 @@ object MainPage extends DispatchSnippet{
   }
 
   def redrawAndRewrite(state: PageState): JsCmd = redraw(state) & rewriteUrl()
+  def redrawAndRewrite(state: PageState, prevState: PageState, toRedraw: BasePanel*): JsCmd = {
+    partialRedraw(state, prevState, toRedraw:_*) & addToNavHistory(prevState)
+  }
+
+  def partialRedraw(state: PageState, prevState: PageState, toRedraw: BasePanel*): JsCmd = {
+    SinglePageState.set(state)
+    val cmds: Seq[JsCmd] = toRedraw.map(panel => SetHtml(panel.uniqueId, panel.draw()))
+    cmds.reduceLeft(_ & _)
+  }
 
   def redraw(state: PageState): JsCmd = {
     SinglePageState.set(state)
@@ -48,12 +57,14 @@ object MainPage extends DispatchSnippet{
   }
 
   private def rewriteUrl(): JsCmd = Run("rewriteUrl(%s)".format(buildRewriteParams()))
+  private def addToNavHistory(state: PageState): JsCmd = Run("addHistory(%s)".format(buildRewriteParams()))
 
-  private def buildRewriteParams(): String = {
-    val state = SinglePageState.get
+  private def buildRewriteParams(): String = buildRewriteParams(SinglePageState.get)
+
+  private def buildRewriteParams(state: PageState): String = {
     implicit val formats = DefaultFormats
     val serializedState = Serialization.write(state)
-    "'%s', '%s', '%s', '/'+'%s'".format(state.typeName, serializedState, state.typeName, state.buildUrl())
+    "'%s', '%s', '%s', '/'+'%s'".format(state.typeName, serializedState, state.typeName, state.url)
   }
 
   private def drawHistory(ignored: String): LiftResponse = {
@@ -76,7 +87,8 @@ object MainPage extends DispatchSnippet{
     S.fmapFunc(SFuncHolder(drawHistory))(
       func => {
         val url = S.encodeURL(S.contextPath + "/" + LiftRules.ajaxPath) + "?" + func + "=_"
-        Run("initBackForward('%s', %s)".format(url, buildRewriteParams()))
+        Run("initBackForward('%s', %s)".format(url, buildRewriteParams())) &
+        rewriteUrl()
       }
     )
   }

@@ -1,3 +1,5 @@
+
+
 package anyread.web.states
 
 import net.liftweb.http.{RewriteResponse, ParsePath, RewriteRequest}
@@ -6,7 +8,7 @@ import anyread.web.single.SinglePageState
 import net.liftweb.json.{DefaultFormats, JsonParser}
 
 trait PageState {
-  def buildUrl(): String
+  def url: String
 
   def handler: PageStateHandler
 
@@ -37,7 +39,7 @@ trait PageStateHandler {
 case object RssListState extends PageState with PageStateHandler {
   val path = "rss" :: "list" :: Nil
 
-  def buildUrl() = path.mkString("/")
+  lazy val url = path.mkString("/")
 
   val handler = this
 
@@ -59,8 +61,14 @@ case object RssListState extends PageState with PageStateHandler {
   }
 }
 
-case class PreviewPageState(id: Long) extends PageState {
-  def buildUrl() = (PreviewPageStateHandler.path ::: id.toString :: Nil).mkString("/")
+case class PreviewPageState(id: Long, full: Boolean = false) extends PageState {
+  lazy val url = {
+    var url = PreviewPageStateHandler.path ::: id.toString :: Nil
+    if (full) {
+      url = url ::: "full" :: Nil
+    }
+    url.mkString("/")
+  }
   val handler = PreviewPageStateHandler
   val typeName = "PreviewPage"
 }
@@ -72,6 +80,10 @@ object PreviewPageStateHandler extends PageStateHandler {
       NamedPF("preview") {
         case RewriteRequest(ParsePath("preview" ::  id :: Nil, _, _, _), _, _) => {
           SinglePageState(new PreviewPageState(id.toLong))
+          RewriteResponse(ParsePath("index" :: Nil, "", true, false), Map(), true)
+        }
+        case RewriteRequest(ParsePath("preview" ::  id :: "full" :: Nil, _, _, _), _, _) => {
+          SinglePageState(new PreviewPageState(id.toLong, true))
           RewriteResponse(ParsePath("index" :: Nil, "", true, false), Map(), true)
         }
       }

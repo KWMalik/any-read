@@ -114,11 +114,16 @@ function checkNewCommentButtonsEnabled(input, id) {
 
 function rewriteUrl(stateType, state, title, urlPath){
     document.title = title;
+    window.history.replaceState({"pageTitle":title, "state":state, "stateType":stateType}, title, urlPath);
+}
+function addHistory(stateType, state, title, urlPath){
+    document.title = title;
     window.history.pushState({"pageTitle":title, "state":state, "stateType":stateType}, title, urlPath);
 }
 function initBackForward(requestUrl, stateType, state, title, urlPath) {
     window.onpopstate = function (e) {
         if (e.state) {
+            alert(e.state.state);
             document.title = e.state.pageTitle;
             $.ajax({
                 type:"GET",

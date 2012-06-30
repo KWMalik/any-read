@@ -4,20 +4,23 @@
 
 //RSS
 .main, .details {
-    width: 45%;
+    width: 48%;
     display: inline-block;
     vertical-align: top;
-}
-.details {
+    overflow-y: scroll;
+    height: 100%;
     position: fixed;
     top: 0;
+}
+.details {
+    right:0;
 }
 .rss-list {
     background-color: @feedListBack;
     padding: @paddingMedium;
 }
 .rss-item {
-    padding: @paddingMedium;
+    padding: @paddingSmall;
     margin-bottom: @paddingSmall;
     border: 1px solid;
     border-top-color: @feedBorderTopColor;

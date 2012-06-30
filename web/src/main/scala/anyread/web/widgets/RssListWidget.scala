@@ -3,8 +3,9 @@ package anyread.web.widgets
 import anyread.feed.RssFeedLoader
 import xml.Unparsed
 import net.liftweb.http.SHtml
-import anyread.web.snippet.MainPage
+import anyread.web.snippet.{DetailsPanel, MainPage}
 import anyread.web.states.PreviewPageState
+import anyread.web.single.SinglePageState
 
 /**
  * @author anton.safonov
@@ -12,14 +13,14 @@ import anyread.web.states.PreviewPageState
 
 object RssListWidget extends Widget {
   def draw() = {
+    val state = SinglePageState.get
     val css = ".rss-item *" #> RssFeedLoader.load().map(
       feed => {
         ".rss-item-link [href]" #> feed.link &
           ".rss-item-link *" #> feed.name &
-          ".rss-item-extract *" #> Unparsed(feed.extract) &
           ".rss-item-date *" #> format(feed.date) &
           ".rss-item-preview [onclick]" #> SHtml.ajaxInvoke(
-            () => MainPage.redrawAndRewrite(new PreviewPageState(feed.id))
+            () => MainPage.redrawAndRewrite(new PreviewPageState(feed.id), state, DetailsPanel)
           )
       }
     )

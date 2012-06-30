@@ -11,7 +11,7 @@ import anyread.web.states.{PreviewPageState, RssListState}
 object MainContent extends BasePanel {
   protected def panelWidget = SinglePageState.get match {
     case RssListState => RssListWidget
-    case PreviewPageState(_) => RssListWidget
+    case PreviewPageState(_, _) => RssListWidget
     case unexpected => throw new IllegalStateException("Unexpected state " + unexpected)
   }
 }
