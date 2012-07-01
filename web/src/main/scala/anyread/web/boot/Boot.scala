@@ -8,7 +8,8 @@ import java.util.Locale
 import util._
 import Helpers._
 import java.lang.reflect.InvocationTargetException
-import anyread.web.states.{StateHandlersRegistry, RedNameStateHandler, GreenNameStateHandler}
+import anyread.web.states.StateHandlersRegistry
+import anyread.web.snippet.MainPage
 
 class Boot {
 
@@ -63,6 +64,8 @@ class Boot {
         }
       }
     }
+
+    LiftRules.dispatch.append(MainPage.Rest)
 
     rewriteRequests()
   }

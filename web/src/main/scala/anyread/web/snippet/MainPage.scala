@@ -11,14 +11,14 @@ import net.liftweb.json.{Serialization, DefaultFormats}
 import net.liftweb.http.js.JsCmds.Run
 import net.liftweb.http.js.JsCmds.SetHtml
 import net.liftweb.util.Helpers._
-import net.liftweb.http.S.SFuncHolder
+import rest.RestHelper
 import scala.Some
 
 /**
  * @author anton.safonov
  */
 
-object MainPage extends DispatchSnippet{
+object MainPage extends DispatchSnippet {
 
   private val panels: mutable.MultiMap[PageStateHandler, BasePanel]
   = new mutable.HashMap[PageStateHandler, mutable.Set[BasePanel]] with mutable.MultiMap[PageStateHandler, BasePanel]
@@ -67,7 +67,7 @@ object MainPage extends DispatchSnippet{
     "'%s', '%s', '%s', '/'+'%s'".format(state.typeName, serializedState, state.typeName, state.url)
   }
 
-  private def drawHistory(ignored: String): LiftResponse = {
+  private def drawHistory(): LiftResponse = {
     val newState = fetchNewState()
     val prevState = fetchPrevState()
 
@@ -83,12 +83,13 @@ object MainPage extends DispatchSnippet{
     stateExtractor.lift.apply(S.param("newStateType").openOr("") -> S.param("newState").openOr(""))
   }
 
+  object Rest extends RestHelper {
+    serve {
+      case "frmw" :: "navigate" :: Nil JsonGet _ => drawHistory()
+    }
+  }
+
   private lazy val initBackForward: JsCmd = {
-    S.fmapFunc(SFuncHolder(drawHistory))(
-      func => {
-        val url = S.encodeURL(S.contextPath + "/" + LiftRules.ajaxPath) + "?" + func + "=_"
-        Run("initBackForward('%s', %s)".format(url, buildRewriteParams()))
-      }
-    )
+    Run("initBackForward('%s', %s)".format("/frmw/navigate", buildRewriteParams()))
   }
 }
