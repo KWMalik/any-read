@@ -5,11 +5,14 @@ import common._
 import http._
 import js.JsCmds.Run
 import java.util.Locale
+import sitemap.Loc.Hidden
+import sitemap.{*, **, SiteMap, Menu}
 import util._
 import Helpers._
 import java.lang.reflect.InvocationTargetException
 import anyread.web.states.StateHandlersRegistry
 import anyread.web.snippet.MainPage
+import anyread.web.auth.OauthAuthorizer
 
 class Boot {
 
@@ -24,6 +27,8 @@ class Boot {
 
     // where to search snippet
     LiftRules.addToPackages("anyread.web")
+
+    buildSiteMap()
 
     //Show the spinny image when an Ajax call starts
     LiftRules.ajaxStart = Full(
@@ -66,6 +71,7 @@ class Boot {
     }
 
     LiftRules.dispatch.append(MainPage.Rest)
+    LiftRules.dispatch.append(OauthAuthorizer)
 
     rewriteRequests()
   }
@@ -77,5 +83,15 @@ class Boot {
         rewrites.map(_.get).reduceLeft(_ orElse _)
       }
     )
+  }
+
+  def buildSiteMap() {
+
+    val entries = List(
+      Menu.i("Reader") / "index",
+      Menu.i("OAuth") / "auth" / "oauthcallback" / ** >> Hidden
+    )
+
+    LiftRules.setSiteMap(SiteMap(entries: _*))
   }
 }

@@ -60,6 +60,8 @@ object Dependencies {
   val lesscss = "com.asual.lesscss" % "lesscss-engine" % lessVer
   val lesscssservlet = "com.asual.lesscss" % "lesscss-servlet" % lessVer
 
+  val httpClient = "org.apache.httpcomponents" % "httpclient" % "4.2.1"
+
   val servlet = "javax.servlet" % "servlet-api" % "2.5" % "provided->default"
 
   val jettyServer = "org.eclipse.jetty" % "jetty-server" % jettyVer % "container"
@@ -85,7 +87,7 @@ object Dependencies {
 
   val jettyDeps = Seq(jettyServer, jettyWebApp)
 
-  val webDeps = liftDeps ++ lessDeps ++ jettyDeps ++ commonDeps
+  val webDeps = liftDeps ++ lessDeps ++ jettyDeps ++ commonDeps ++ Seq(httpClient)
 }
 
 object AnyReadBuild extends Build {

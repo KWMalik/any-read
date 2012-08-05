@@ -14,10 +14,15 @@
     <script type="text/javascript" src="/scripts/util.js"></script>
 </head>
 <body>
-<div class="top-bar">123</div>
+<div class="top-bar-back"></div>
+<div class="top-bar">
+    <div data-lift="topbar/AuthButtons">
+        <div class="goauth"></div>
+    </div>
+</div>
 <div class="messages-container">
     <div class="container-tsb messages" data-alert="alert">
-        <div class="lift:Msgs?showAll=false">
+        <div data-lift="Msgs?showAll=false">
             <lift:error_class>alert-message error fade in</lift:error_class>
             <lift:error_msg><a class="close" href="javascript://">×</a></lift:error_msg>
 
